@@ -1,5 +1,5 @@
 /*
- This is a jquery plug-in for build a table with sticky header+rows and DnD columns.
+ This is a jquery plug-in for build a table with sticky header+columns and DnD columns. Save sticky column in cookie.
 
  Copyright 2013-2020 Vitaly Pogrebenko
  http://www.altanovasoftware.com/
@@ -340,7 +340,7 @@
                                 );
                             copy_thead_sizes( toTable, fromTable );
                         }
-                        toTable.css( 'height', fromTable.find( 'thead' ).height() + 1 );
+                        toTable.css( 'height', fromTable.find( 'thead' ).height() );
                         toTable.css( 'width', colsTable.width() );
 
                         toTable.css( 'top', toolbarHeight );
@@ -376,7 +376,7 @@
                                 );
                             copy_thead_sizes( toTable, fromTable );
                         }
-                        toTable.css( 'height', fromTable.find( 'thead' ).height() + 1 );
+                        toTable.css( 'height', fromTable.find( 'thead' ).height() );
                         toTable.css( 'width', colsTable.width() );
 
                         toTable.css( 'top', fromOffsetTop - $(document).scrollTop() );
@@ -488,9 +488,9 @@
 
                             copy_tbody_sizes( toTable, fromTable );
                         }
-                        toTable.css( 'height', fromTable.find('tbody').height() + 2.3 );
+                        toTable.css( 'height', fromTable.find('tbody').height() );
 
-                        toTable.css( 'top', tbodyOffsetTop - $(document).scrollTop() - 1 );
+                        toTable.css( 'top', tbodyOffsetTop - $(document).scrollTop() );
                         toTable.css( 'margin-left', -fromOffsetLeft );
 
                         if( toTable.is( ':hidden' ) )
