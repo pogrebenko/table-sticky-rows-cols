@@ -675,11 +675,11 @@
                     , overClass : 'over-column'
                 };
 
-                var $table = table, dragSrcEl = null, dragSrcEnter = null/*, cursor = null*/;
+                var $table = table, dragSrcItem = null, dragSrcEnter = null/*, cursor = null*/;
 
-                if( isIE() === 9 )
+                if( isMSIE() === 9 )
                 {
-                    table.find( 'thead tr th' ).each(
+                    $table.find( 'thead tr th' ).each(
                         function()
                         {
                             if( $(this).find( '.drag-ie' ).length === 0 )
@@ -692,18 +692,16 @@
                     );
                 }
 
-                var cols = table.find( 'thead tr th' );
-
-                [].forEach.call( cols,
-                    function( col )
+                $table.find( 'thead tr th' ).each(
+                    function()
                     {
-                        col.setAttribute( 'draggable', true );
+                        this.setAttribute( 'draggable', true );
 
-                        var _col = $( col );
+                        var _col = $( this );
                         _col.bind( 'dragstart', dragstart );
                         _col.bind( 'dragenter', dragenter );
-                        _col.bind( 'dragover' , dragover  );
                         _col.bind( 'dragleave', dragleave );
+                        _col.bind( 'dragover' , dragover  );
                         _col.bind( 'drop'     , drop      );
                         _col.bind( 'dragend'  , dragend   );
                     }
@@ -714,7 +712,7 @@
                 function dragstart( e )
                 {
                     $(this).addClass( optionsDnD.dragClass );
-                    dragSrcEl = this;
+                    dragSrcItem = this;
 
                     e.dataTransfer.effectAllowed = 'move';
                     e.dataTransfer.setData( 'text/html', this.id );
@@ -733,10 +731,10 @@
                 function dragenter( e )
                 {
                     dragSrcEnter = this;
-                    [].forEach.call( cols,
-                        function ( col )
+                    $table.find( 'thead tr th' ).each(
+                        function ()
                         {
-                            $(col).removeClass( optionsDnD.overClass );
+                            $(this).removeClass( optionsDnD.overClass );
                         }
                     );
                     $(this).addClass( optionsDnD.overClass );
@@ -745,7 +743,7 @@
                 {
                     if( dragSrcEnter !== e )
                     {
-                        moveColumns( $(dragSrcEnter).index(), $(dragSrcEl).index() );
+                        moveColumns( $(dragSrcEnter).index(), $(dragSrcItem).index() );
                     }
                 }
                 function drop( e )
@@ -755,9 +753,9 @@
                         e.stopPropagation();
                     }
 
-                    if( dragSrcEl !== e )
+                    if( dragSrcItem !== e )
                     {
-                        moveColumns( $( dragSrcEl ).index(), $(this).index() );
+                        moveColumns( $( dragSrcItem ).index(), $(this).index() );
                     }
                 }
                 function dragend( e )
@@ -767,48 +765,49 @@
                         object : {}
                     };
 
-                    [].forEach.call( cols,
-                        function (col)
+                    $table.find( 'thead tr th' ).each(
+                        function ()
                         {
-                            var name = $(col).attr('data-name') || $(col).index();
-                            $(col).removeClass( optionsDnD.overClass );
-                            colPositions.object[name] = $(col).index();
-                            colPositions.array.push( $(col).index() );
+                            var _col = $(this);
+                            var name = _col.attr('data-name') || _col.index();
+                            _col.removeClass( optionsDnD.overClass );
+                            colPositions.object[name] = _col.index();
+                            colPositions.array.push( _col.index() );
                         }
                     );
 
-                    $(dragSrcEl).removeClass( optionsDnD.dragClass );
+                    $(dragSrcItem).removeClass( optionsDnD.dragClass );
 
                     //e.target.style.cursor = cursor;
                 }
 
-                function moveColumns( fromIndex, toIndex )
+                function moveColumns( fromIdx, toIdx )
                 {
                     var rows = $table.find( 'tr' );
                     for( var i = 0, n = rows.length; i < n; i ++ )
                     {
                         var item = rows[ i ];
-                        if( toIndex > fromIndex )
+                        if( toIdx > fromIdx )
                         {
-                            insertAfter( item.children[ fromIndex ], item.children[ toIndex ] );
+                            insertAfter( item.children[ fromIdx ], item.children[ toIdx ] );
                         }
                         else
-                        if( toIndex < $table.find( 'thead tr th' ).length - 1 )
+                        if( toIdx < $table.find( 'thead tr th' ).length - 1 )
                         {
-                            item.insertBefore( item.children[ fromIndex ], item.children[ toIndex ] );
+                            item.insertBefore( item.children[ fromIdx ], item.children[ toIdx ] );
                         }
                     }
                 }
 
-                function insertAfter(elem, refElem)
+                function insertAfter( item, refItem )
                 {
-                    return refElem.parentNode.insertBefore(elem, refElem.nextSibling);
+                    return refItem.parentNode.insertBefore( item, refItem.nextSibling );
                 }
 
-                function isIE ()
+                function isMSIE()
                 {
-                    var nav = navigator.userAgent.toLowerCase();
-                    return (nav.indexOf('msie') !== -1) ? parseInt(nav.split('msie')[1]) : false;
+                    var ua = navigator.userAgent.toLowerCase();
+                    return ( ua.indexOf( 'msie' ) !== -1 ) ? parseInt( ua.split( 'msie' )[ 1 ] ) : false;
                 }
 
             }
